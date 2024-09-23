@@ -76,11 +76,11 @@ This application demonstrates SQL Injection vulnerabilities, improper access con
 To exploit the SQL injection vulnerability on the login page, use the following payloads:
 
 - **Username**:  
-  ```sql
-  ' OR '1'='1
-  ```
+  admin
 - **Password**:  
-  Enter anything or leave it blank since it will be ignored.
+  ```sql
+  ' OR 1=1 --
+  ```
 
 These inputs manipulate the SQL query, allowing unauthorized access to the application.
 
