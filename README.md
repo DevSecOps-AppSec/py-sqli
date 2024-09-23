@@ -7,11 +7,12 @@ This application demonstrates SQL Injection vulnerabilities, improper access con
 
 - **Login Functionality**: Users can log in using predefined credentials stored in a local SQLite database.
 - **Admin-Only Search Functionality**: The admin user can search for users by their ID. However, due to improper access controls, all logged-in users can access this page through forced browsing.
-- **SQL Injection Vulnerability**: The search field is vulnerable to SQL Injection, allowing attackers to extract all user data.
+- **SQL Injection Vulnerability**: The login and search fields are vulnerable to SQL Injection, allowing attackers to extract all user data.
 
 ## Vulnerabilities Demonstrated
 
 - **Error-Based SQL Injection**: The search functionality is intentionally left vulnerable, allowing attackers to manipulate the SQL query and retrieve sensitive data.
+- **Login Bypass via SQL Injection**: The login page can be exploited to bypass authentication and gain unauthorized access.
 - **Forced Browsing**: Non-admin users can access restricted admin pages by directly navigating to the URL, demonstrating the consequences of improper access control.
 
 ## Prerequisites
@@ -70,12 +71,25 @@ This application demonstrates SQL Injection vulnerabilities, improper access con
     - `guest / guestpass`
     - `testuser / testpass`
 
+### SQL Injection Bypass for Login
+
+To exploit the SQL injection vulnerability on the login page, use the following payloads:
+
+- **Username**:  
+  ```sql
+  ' OR '1'='1
+  ```
+- **Password**:  
+  Enter anything or leave it blank since it will be ignored.
+
+These inputs manipulate the SQL query, allowing unauthorized access to the application.
+
 ### 2. Forced Browsing Vulnerability
 
 - Non-admin users will not see the "Search User by ID" option on the home page.
 - However, they can access the page by directly navigating to `/search-user`.
 
-### 3. SQL Injection Exploit
+### 3. SQL Injection Exploit on Search Page
 
 - Access the "Search User by ID" page and enter the following vulnerable input:
 
