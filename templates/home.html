@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Welcome</title>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card p-4 shadow-sm">
+            {% if username %}
+                <h2 class="text-center">Welcome, {{ username }}</h2>
+                <hr>
+                {% if username == 'admin' %}
+                    <a href="/search-user" class="btn btn-primary btn-block mb-3">Search User by ID</a>
+                {% endif %}
+                <a href="/logout" class="btn btn-danger btn-block">Logout</a>
+            {% else %}
+                <h2 class="text-center">Welcome to SQL Injection Demo</h2>
+                <hr>
+                <a href="/login" class="btn btn-primary btn-block">Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
