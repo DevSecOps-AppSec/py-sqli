@@ -14,6 +14,8 @@
                 <hr>
                 {% if username == 'admin' %}
                     <a href="/search-user" class="btn btn-primary btn-block mb-3">Search User by ID</a>
+                {% else %}
+                    <a href="/products" class="btn btn-success btn-block mb-3">Go to Product Page</a>
                 {% endif %}
                 <a href="/logout" class="btn btn-danger btn-block">Logout</a>
             {% else %}

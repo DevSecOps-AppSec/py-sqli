@@ -9,20 +9,65 @@
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card p-4 shadow-sm">
-            <h2 class="text-center">Search User by ID</h2>
-            <form method="post">
+            <h2 class="text-center">Search, Add, or Delete User</h2>
+
+            <!-- Display success and failure messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Form to Search User by ID -->
+            <form method="post" class="mb-3">
                 <div class="form-group">
-                    <label for="user_id">User ID</label>
+                    <label for="user_id">Search User by ID</label>
                     <input type="text" class="form-control" id="user_id" name="user_id" placeholder="Enter User ID" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Search</button>
             </form>
+
+            <!-- Display search results -->
             {% if user_data %}
                 <div class="mt-4">
                     <h5>Results:</h5>
-                    <p>{{ user_data | safe }}</p>
+                    <ul class="list-group">
+                        {% for user in user_data %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ID: {{ user[0] }}, Username: {{ user[1] }}, Password: {{ user[2] }}
+                            <!-- Form to Delete User -->
+                            <form method="post" style="display: inline;">
+                                <input type="hidden" name="user_id_to_delete" value="{{ user[0] }}">
+                                <button type="submit" name="delete_user" class="btn btn-danger btn-sm">Delete User</button>
+                            </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             {% endif %}
+
+            <hr>
+
+            <!-- Form to Add a New User -->
+            <form method="post" class="mb-3">
+                <h5>Add New User</h5>
+                <div class="form-group">
+                    <label for="new_username">Username</label>
+                    <input type="text" class="form-control" id="new_username" name="new_username" placeholder="Enter Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Password</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" name="add_user" class="btn btn-success btn-block">Add User</button>
+            </form>
         </div>
         <a href="/" class="btn btn-secondary mt-3 btn-block">Home</a>
     </div>

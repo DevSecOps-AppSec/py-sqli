@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Cart</title>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center">Your Cart</h2>
+        {% if cart %}
+        <ul class="list-group mb-3">
+            {% for item in cart %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ item.name }}
+                <span>${{ item.price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <h4>Total: $<span id="total">{{ total }}</span></h4>
+        <form method="post" action="{{ url_for('checkout') }}">
+            <input type="hidden" name="total" value="{{ total }}">
+            <button type="submit" class="btn btn-success btn-block">Checkout</button>
+        </form>
+        {% else %}
+        <p class="text-center">Your cart is empty.</p>
+        {% endif %}
+        <a href="{{ url_for('products') }}" class="btn btn-secondary btn-block">Continue Shopping</a>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
