@@ -43,9 +43,10 @@ def configure_routes(app):
 
     @app.route('/search-user', methods=['GET', 'POST'])
     def search_user():
-        if 'username' not in session or session['username'] != 'admin':
-            flash("You must be an admin to access this page.")
-            return redirect(url_for('home'))
+        
+        if 'username' not in session:
+            flash("You need to be logged in to search for users.")
+            return redirect(url_for('login'))
 
         db = get_db()
 
@@ -79,9 +80,9 @@ def configure_routes(app):
                 # Search user by ID
                 user_id = request.form.get('user_id')
                 try:
-                    query = f"SELECT * FROM users WHERE id = {user_id}"
+                    query = "SELECT * FROM users WHERE id = ?"
                     print(f"Executing SQL Query: {query}")
-                    result = db.execute(query).fetchall()
+                    result = db.execute(query, (user_id,)).fetchall()
                     if result:
                         user_data = result
                         return render_template('search_user.html', user_data=user_data)
