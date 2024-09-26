@@ -43,9 +43,10 @@ def configure_routes(app):
 
     @app.route('/search-user', methods=['GET', 'POST'])
     def search_user():
-        if 'username' not in session or session['username'] != 'admin':
-            flash("You must be an admin to access this page.")
-            return redirect(url_for('home'))
+        
+        if 'username' not in session:
+            flash("You need to be logged in to search for users.")
+            return redirect(url_for('login'))
 
         db = get_db()
 
