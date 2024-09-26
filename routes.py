@@ -80,9 +80,9 @@ def configure_routes(app):
                 # Search user by ID
                 user_id = request.form.get('user_id')
                 try:
-                    query = "SELECT * FROM users WHERE id = ?"
+                    query = f"SELECT * FROM users WHERE id = {user_id}"
                     print(f"Executing SQL Query: {query}")
-                    result = db.execute(query, (user_id,)).fetchall()
+                    result = db.execute(query).fetchall()
                     if result:
                         user_data = result
                         return render_template('search_user.html', user_data=user_data)
