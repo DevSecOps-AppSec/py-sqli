@@ -8,12 +8,20 @@ This application demonstrates SQL Injection vulnerabilities, improper access con
 - **Login Functionality**: Users can log in using predefined credentials stored in a local SQLite database.
 - **Admin-Only Search Functionality**: The admin user can search for users by their ID. However, due to improper access controls, all logged-in users can access this page through forced browsing.
 - **SQL Injection Vulnerability**: The login and search fields are vulnerable to SQL Injection, allowing attackers to extract all user data.
+- **Remote Code Execution (RCE) Vulnerability**: A URL-to-IP lookup feature is vulnerable to command injection, enabling attackers to execute arbitrary shell commands.
 
 ## Vulnerabilities Demonstrated
 
+### SQL Injection (SQLi)
 - **Error-Based SQL Injection**: The search functionality is intentionally left vulnerable, allowing attackers to manipulate the SQL query and retrieve sensitive data.
 - **Login Bypass via SQL Injection**: The login page can be exploited to bypass authentication and gain unauthorized access.
-- **Forced Browsing**: Non-admin users can access restricted admin pages by directly navigating to the URL, demonstrating the consequences of improper access control.
+
+### Forced Browsing
+- Non-admin users can access restricted admin pages by directly navigating to the URL, demonstrating the consequences of improper access control.
+
+### Remote Code Execution (RCE)
+- The RCE vulnerability allows attackers to exploit the `nslookup` feature, injecting arbitrary shell commands to execute on the server.
+
 
 ## Prerequisites
 
@@ -100,6 +108,24 @@ These inputs manipulate the SQL query, allowing unauthorized access to the appli
   ```
 
 - This payload manipulates the SQL query to return all user data from the database.
+
+### 4. Remote Code Execution (RCE) Exploit
+
+- Navigate to `/rce` and enter a URL to resolve its IP address using the `nslookup` command.
+- **Normal Input**:
+  - Input: `google.com`  
+  - Output: Displays the IP address of `google.com`.
+- **Malicious Input**:
+  - Input: `google.com; whoami`  
+  - Output: Executes the `whoami` command after resolving the IP address.
+- **Advanced Exploitation**:
+  - Input: `google.com; ls`  
+  - Output: Lists files in the application directory.
+  - Input: `google.com; cat /etc/passwd`  
+  - Output: Displays the contents of the `/etc/passwd` file (Linux systems).
+- **Critical Exploit**:
+  - Input: `google.com; rm -rf /`  
+  - ⚠️ **Warning**: This command deletes all files on the system. Use with caution in simulations only.
 
 ## Security Considerations
 
