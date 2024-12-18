@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from db import get_db, hash_password
+import os
 
 def configure_routes(app):
     @app.teardown_appcontext
@@ -152,3 +153,27 @@ def configure_routes(app):
             return redirect(url_for('products'))
         return render_template('checkout_success.html', order_summary=order_summary, order_total=order_total)
     
+    @app.route('/rce', methods=['GET', 'POST'])
+    def rce():
+        if 'username' not in session:
+            flash("You must be logged in to access the RCE demo.", "danger")
+            return redirect(url_for('login'))
+
+        output = None
+        error = None
+
+        if request.method == 'POST':
+            user_input = request.form.get('url')
+
+            if user_input:
+                try:
+                    # Command injection vulnerability: unsanitized user input is passed directly to the shell
+                    command = f"nslookup {user_input}"  # Replace with `ping` or any network command as desired
+                    output = os.popen(command).read()
+                except Exception as e:
+                    error = f"Error executing command: {str(e)}"
+            else:
+                flash("Please enter a valid URL.", "warning")
+
+        return render_template('rce.html', output=output, error=error)
+ 
