@@ -30,7 +30,7 @@ def configure_routes(app):
             result = db.execute(query).fetchone()
             if result:
                 session['username'] = result[1]  # Log in as the specific user returned by the query
-                session.pop('cart', None)  # Clear the cart on new login
+                session.pop('cart', None)  # Clear the cart on new login test
                 return redirect(url_for('home'))
             else:
                 return render_template('error.html', message="Invalid credentials! Use SQL Injection payload in the username field.")
