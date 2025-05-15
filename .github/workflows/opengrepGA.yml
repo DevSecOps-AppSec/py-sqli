@@ -55,7 +55,7 @@ jobs:
 
     - name: Run OpenGrep scan and output to JSON
       run: |
-        opengrep scan --metrics=auto --format=json ${{ steps.changed-files.outputs.FILES }} > findings.json
+        opengrep scan  --json-output=findings.json --metrics=auto ${{ steps.changed-files.outputs.FILES }}
 
     - name: Filter findings to only changed lines
       run: |
