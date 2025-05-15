@@ -27,7 +27,7 @@ jobs:
 
     - name: Download and install OpenGrep
       run: |
-        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep-linux-x86_64"
+        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep_manylinux_x86"
         chmod +x opengrep
         sudo mv opengrep /usr/local/bin/opengrep
 
@@ -55,7 +55,8 @@ jobs:
 
     - name: Run OpenGrep scan and output to JSON
       run: |
-        opengrep scan -h
+        opengrep scan  --json-output=findings.json --metrics=auto db.py
+        cat findings.json
 
     - name: Filter findings to only changed lines
       run: |
