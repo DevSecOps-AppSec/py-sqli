@@ -43,15 +43,20 @@ jobs:
       run: |
         echo "{}" > changed_lines.json
         for file in $(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }}); do
-          lines=$(git diff -U0 origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- "$file" | \
-            grep '^@@' | sed -nE 's/^@@ \+([0-9]+)(,[0-9]+)? .*/\1/p' | tr '\n' ' ')
-          if [ ! -z "$lines" ]; then
-            jq --arg file "$file" --argjson lines "$(echo $lines | jq -R 'split(" ") | map(tonumber)')" \
+          mapfile -t lines < <(git diff -U0 origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- "$file" | \
+            grep '^@@' | sed -nE 's/^@@ \+([0-9]+)(?:,([0-9]+))? @@.*/\1 \2/p' | awk '{ count = ($2 == "") ? 1 : $2; for(i = 0; i < count; i++) print $1 + i }')
+          if [ ${#lines[@]} -gt 0 ]; then
+            jq --arg file "$file" --argjson lines "$(printf '%s\n' "${lines[@]}" | jq -s '.')" \
               '. + {($file): $lines}' changed_lines.json > tmp.json && mv tmp.json changed_lines.json
           fi
         done
         echo "Changed lines by file:"
         cat changed_lines.json
+
+    - name: Debug changed lines
+      run: |
+        echo "Contents of changed_lines.json:"
+        cat changed_lines.json || echo "❌ File not found"
 
     - name: Run OpenGrep scan and output to JSON
       run: |
@@ -61,9 +66,9 @@ jobs:
     - name: Filter findings to only changed lines
       run: |
         echo "[]" > relevant_findings.json
-        jq -c '.[]' findings.json | while read -r finding; do
-          file=$(echo "$finding" | jq -r '.file')
-          line=$(echo "$finding" | jq -r '.line')
+        jq -c '.results[]' findings.json | while read -r finding; do
+          file=$(echo "$finding" | jq -r '.path')
+          line=$(echo "$finding" | jq -r '.start.line')
           if jq -e --arg file "$file" --argjson line "$line" \
             'has($file) and (.[$file] | index($line))' changed_lines.json > /dev/null; then
             jq -n "$finding" >> relevant_findings.json
