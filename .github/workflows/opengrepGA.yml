@@ -39,17 +39,31 @@ jobs:
         echo "Changed files: $FILES"
 
     - name: Get line-level changes per file
-      id: diff-lines
       run: |
         echo "{}" > changed_lines.json
+
         for file in $(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }}); do
-          mapfile -t lines < <(git diff -U0 origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- "$file" | \
-            grep '^@@' | sed -nE 's/^@@ \+([0-9]+)(?:,([0-9]+))? @@.*/\1 \2/p' | awk '{ count = ($2 == "") ? 1 : $2; for(i = 0; i < count; i++) print $1 + i }')
+          echo "Processing $file"
+          # Extract changed line ranges from unified diff headers (e.g., @@ +20,3 @@)
+          mapfile -t ranges < <(git diff -U0 origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- "$file" | grep '^@@' | grep -oP '\+\d+(,\d+)?' | sed 's/+//')
+
+          # Convert to individual line numbers
+          lines=()
+          for range in "${ranges[@]}"; do
+            start=$(echo $range | cut -d',' -f1)
+            count=$(echo $range | cut -s -d',' -f2)
+            count=${count:-1}
+            for ((i=0; i<$count; i++)); do
+              lines+=($(($start + $i)))
+            done
+          done
+
           if [ ${#lines[@]} -gt 0 ]; then
             jq --arg file "$file" --argjson lines "$(printf '%s\n' "${lines[@]}" | jq -s '.')" \
               '. + {($file): $lines}' changed_lines.json > tmp.json && mv tmp.json changed_lines.json
           fi
         done
+
         echo "Changed lines by file:"
         cat changed_lines.json
 
