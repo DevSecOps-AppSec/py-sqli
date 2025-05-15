@@ -27,7 +27,7 @@ jobs:
 
     - name: Download and install latest OpenGrep
       run: |
-        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep-linux-x86_64"
+        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep_manylinux_x86"
         chmod +x opengrep
         sudo mv opengrep /usr/local/bin/opengrep
 
