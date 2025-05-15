@@ -77,17 +77,20 @@ jobs:
         opengrep scan  --json-output=findings.json --metrics=auto db.py
         cat findings.json
 
-    - name: Filter findings to only changed lines
+        - name: Filter findings to only changed lines
       run: |
         echo "[]" > relevant_findings.json
+
         jq -c '.results[]' findings.json | while read -r finding; do
-          file=$(echo "$finding" | jq -r '.path')
+          file=$(echo "$finding" | jq -r '.path' | sed 's|^\./||')  # remove leading ./ if present
           line=$(echo "$finding" | jq -r '.start.line')
+
           if jq -e --arg file "$file" --argjson line "$line" \
             'has($file) and (.[$file] | index($line))' changed_lines.json > /dev/null; then
             jq -n "$finding" >> relevant_findings.json
           fi
         done
+
         echo "Relevant findings:"
         cat relevant_findings.json || echo "✅ No relevant issues in changed lines."
         
