@@ -13,9 +13,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Important to allow full history for diff
+        fetch-depth: 0
 
-    - name: Fetch all branches
+    - name: Fetch base and head branches
       run: |
         git fetch origin ${{ github.base_ref }} ${{ github.head_ref }}
 
@@ -25,22 +25,49 @@ jobs:
         VERSION=$(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest | jq -r .tag_name)
         echo "VERSION_TAG=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Download and install latest OpenGrep
+    - name: Download and install OpenGrep
       run: |
-        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep_manylinux_x86"
+        curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep-linux-x86_64"
         chmod +x opengrep
         sudo mv opengrep /usr/local/bin/opengrep
 
-    - name: Get changed files in PR
+    - name: Get changed files
       id: changed-files
       run: |
         FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | tr '\n' ' ')
         echo "FILES=$FILES" >> $GITHUB_OUTPUT
         echo "Changed files: $FILES"
 
-    - name: Run OpenGrep on changed files
-      if: steps.changed-files.outputs.FILES != ''
+    - name: Get line-level changes per file
+      id: diff-lines
       run: |
-        echo "Scanning only changed files..."
-        opengrep scan --metrics=auto ${{ steps.changed-files.outputs.FILES }}
+        echo "{}" > changed_lines.json
+        for file in $(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }}); do
+          lines=$(git diff -U0 origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- "$file" | \
+            grep '^@@' | sed -nE 's/^@@ \+([0-9]+)(,[0-9]+)? .*/\1/p' | tr '\n' ' ')
+          if [ ! -z "$lines" ]; then
+            jq --arg file "$file" --argjson lines "$(echo $lines | jq -R 'split(" ") | map(tonumber)')" \
+              '. + {($file): $lines}' changed_lines.json > tmp.json && mv tmp.json changed_lines.json
+          fi
+        done
+        echo "Changed lines by file:"
+        cat changed_lines.json
+
+    - name: Run OpenGrep scan and output to JSON
+      run: |
+        opengrep scan --metrics=auto --format=json ${{ steps.changed-files.outputs.FILES }} > findings.json
+
+    - name: Filter findings to only changed lines
+      run: |
+        echo "[]" > relevant_findings.json
+        jq -c '.[]' findings.json | while read -r finding; do
+          file=$(echo "$finding" | jq -r '.file')
+          line=$(echo "$finding" | jq -r '.line')
+          if jq -e --arg file "$file" --argjson line "$line" \
+            'has($file) and (.[$file] | index($line))' changed_lines.json > /dev/null; then
+            jq -n "$finding" >> relevant_findings.json
+          fi
+        done
+        echo "Relevant findings:"
+        cat relevant_findings.json || echo "✅ No relevant issues in changed lines."
         
