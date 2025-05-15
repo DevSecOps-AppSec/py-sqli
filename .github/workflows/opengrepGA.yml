@@ -12,33 +12,35 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Important to allow full history for diff
 
-    - name: Fetch latest OpenGrep version
+    - name: Fetch all branches
+      run: |
+        git fetch origin ${{ github.base_ref }} ${{ github.head_ref }}
+
+    - name: Get latest OpenGrep version
       id: get-version
       run: |
         VERSION=$(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest | jq -r .tag_name)
-        echo "OPENGREP_VERSION=${VERSION#v}" >> $GITHUB_ENV
         echo "VERSION_TAG=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Download and install OpenGrep
+    - name: Download and install latest OpenGrep
       run: |
         curl -L -o opengrep "https://github.com/opengrep/opengrep/releases/download/${{ steps.get-version.outputs.VERSION_TAG }}/opengrep-linux-x86_64"
         chmod +x opengrep
         sudo mv opengrep /usr/local/bin/opengrep
 
-    - name: Set up Git for diff
-      run: |
-        git fetch origin ${{ github.base_ref }} --depth=1
-
-    - name: Get changed files
+    - name: Get changed files in PR
       id: changed-files
       run: |
-        FILES=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.head_ref }} | tr '\n' ' ')
+        FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | tr '\n' ' ')
         echo "FILES=$FILES" >> $GITHUB_OUTPUT
+        echo "Changed files: $FILES"
 
-    - name: Run OpenGrep scan
+    - name: Run OpenGrep on changed files
       if: steps.changed-files.outputs.FILES != ''
       run: |
-        echo "Scanning changed files with OpenGrep..."
+        echo "Scanning only changed files..."
         opengrep scan ${{ steps.changed-files.outputs.FILES }}
         
