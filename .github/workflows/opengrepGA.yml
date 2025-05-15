@@ -42,5 +42,5 @@ jobs:
       if: steps.changed-files.outputs.FILES != ''
       run: |
         echo "Scanning only changed files..."
-        opengrep ci 
+        opengrep scan --metrics=auto opengrep scan --metrics=auto 
         
