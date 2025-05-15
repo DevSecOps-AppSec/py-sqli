@@ -77,7 +77,7 @@ jobs:
         opengrep scan  --json-output=findings.json --metrics=auto db.py
         cat findings.json
 
-        - name: Filter findings to only changed lines
+    - name: Filter findings to only changed lines
       run: |
         echo "[]" > relevant_findings.json
 
