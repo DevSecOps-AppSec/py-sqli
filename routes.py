@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, render_template_string
 from db import get_db, hash_password
 import os
 
@@ -13,6 +13,14 @@ def configure_routes(app):
             username = session['username']
             return render_template('home.html', username=username)
         return render_template('home.html')
+    
+    @app.route('/greet', methods=['GET'])
+    def greet():
+        name = request.args.get("name")
+        if name:
+            template = f"Hello {name}!"
+            return render_template_string(template)
+        return render_template('greet.html')
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
