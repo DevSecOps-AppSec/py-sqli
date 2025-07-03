@@ -27,7 +27,7 @@ def configure_routes(app):
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
-            hashed_password = hash_password(password)  # Hash the password before checking
+            hashed_password = hash_password(password)  # Hash the password before checking test
 
             db = get_db()
 
