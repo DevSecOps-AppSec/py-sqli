@@ -2,6 +2,9 @@ from flask import render_template, request, redirect, url_for, session, flash, r
 from db import get_db, hash_password
 import os
 
+stored_comments = []  # for stored XSS demo
+tickets = []  # For demo purpose, storing tickets in memory
+
 def configure_routes(app):
     @app.teardown_appcontext
     def teardown_db(exception):
@@ -161,6 +164,37 @@ def configure_routes(app):
             return redirect(url_for('products'))
         return render_template('checkout_success.html', order_summary=order_summary, order_total=order_total)
     
+    @app.route('/xss-demo', methods=['GET', 'POST'])
+    def xss_demo():
+        if 'username' not in session:
+            flash("You must be logged in to access the XSS demo.", "danger")
+            return redirect(url_for('login'))
+
+        search = request.args.get('search')
+        if request.method == 'POST':
+            comment = request.form.get('comment', '')
+            stored_comments.append(comment)  # store unsanitised comment
+        return render_template(
+            'xss_demo.html',
+            search=search,
+            comments=stored_comments,
+        )
+    
+    @app.route('/raise-ticket', methods=['POST'])
+    def raise_ticket():
+        if 'username' not in session:
+            flash("You must be logged in to raise a ticket.", "danger")
+            return redirect(url_for('login'))
+
+        ticket = request.form.get('ticket')
+        if ticket:
+            tickets.append(ticket)
+            flash("Ticket submitted successfully!", "success")
+        else:
+            flash("Please enter a ticket message.", "warning")
+
+        return redirect(url_for('xss_demo'))
+    
     @app.route('/rce', methods=['GET', 'POST'])
     def rce():
         if 'username' not in session:
@@ -184,4 +218,3 @@ def configure_routes(app):
                 flash("Please enter a valid URL.", "warning")
 
         return render_template('rce.html', output=output, error=error)
- 

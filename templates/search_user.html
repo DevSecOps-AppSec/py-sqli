@@ -68,6 +68,15 @@
                 </div>
                 <button type="submit" name="add_user" class="btn btn-success btn-block">Add User</button>
             </form>
+            <hr>
+
+            <!-- Display support tickets -->
+            <h5>Support Tickets</h5>
+            <ul class="list-group">
+                {% for ticket in tickets %}
+                    <li class="list-group-item">{{ ticket|safe }}</li>
+                {% endfor %}
+            </ul>
         </div>
         <a href="/" class="btn btn-secondary mt-3 btn-block">Home</a>
     </div>
