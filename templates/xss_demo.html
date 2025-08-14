@@ -55,18 +55,6 @@
           <p class="text-muted">Try navigating to <code>#alert('dom')</code> after the URL.</p>
         </div>
       </div>
-
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">Blind XSS</div>
-        <div class="card-body">
-          <form method="post" action="/raise-ticket" class="mb-3">
-            <label for="ticket" class="mr-2">Raise a support ticket to admin:</label>
-            <input type="text" name="ticket" id="ticket" class="form-control mb-2" placeholder="Enter your message for admin">
-            <button type="submit" class="btn btn-warning">Send to Admin</button>
-          </form>
-          <small class="text-muted">Admin can view all tickets on a separate admin page. Example payload: <code>&lt;script&gt;alert('blind xss')&lt;/script&gt;</code></small>
-        </div>
-      </div>
     </div>
     
     <script>

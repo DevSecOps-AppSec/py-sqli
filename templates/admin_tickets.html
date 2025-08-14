@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Admin Ticket Table</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f6f9fc;
+        padding: 40px;
+      }
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #2980b9;
+        font-weight: bold;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .xss-cell {
+        max-width: 400px;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📋 All Submitted Tickets</h1>
+
+      {% if tickets %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Details</th>
+              <th>Description (executes here)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in tickets %}
+              <tr>
+                <td>{{ t.id }}</td>
+                <td>{{ t.username }}</td>
+                <td>{{ t.details }}</td>
+                <td class="xss-cell">{{ t.description | safe }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No tickets submitted yet.</p>
+      {% endif %}
+
+      <a href="{{ url_for('home') }}">⬅ Back to Home</a>
+    </div>
+  </body>
+</html>

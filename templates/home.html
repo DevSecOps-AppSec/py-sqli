@@ -14,8 +14,10 @@
                 <hr>
                 {% if username == 'admin' %}
                     <a href="/search-user" class="btn btn-primary btn-block mb-3">Search User by ID</a>
+                    <p><a class="btn btn-primary btn-block mb-4" href="{{ url_for('view_tickets') }}">Admin: View All Tickets</a></p>
                 {% else %}
                     <a href="/products" class="btn btn-success btn-block mb-3">Go to Product Page</a>
+                    <p><a class="btn btn-primary btn-block mb-4" href="{{ url_for('create_ticket') }}">Create a Ticket</a></p>
                 {% endif %}
                 <a href="/rce" class="btn btn-warning btn-block">RCE Demo</a>
                 <a href="/xss-demo" class="btn btn-info btn-block">XSS Demo</a>

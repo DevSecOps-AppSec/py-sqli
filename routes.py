@@ -4,6 +4,7 @@ import os
 
 stored_comments = []  # for stored XSS demo
 tickets = []  # For demo purpose, storing tickets in memory
+next_ticket_id = 1
 
 def configure_routes(app):
     @app.teardown_appcontext
@@ -180,20 +181,6 @@ def configure_routes(app):
             comments=stored_comments,
         )
     
-    @app.route('/raise-ticket', methods=['POST'])
-    def raise_ticket():
-        if 'username' not in session:
-            flash("You must be logged in to raise a ticket.", "danger")
-            return redirect(url_for('login'))
-
-        ticket = request.form.get('ticket')
-        if ticket:
-            tickets.append(ticket)
-            flash("Ticket submitted successfully!", "success")
-        else:
-            flash("Please enter a ticket message.", "warning")
-
-        return redirect(url_for('xss_demo'))
     
     @app.route('/rce', methods=['GET', 'POST'])
     def rce():
@@ -218,3 +205,34 @@ def configure_routes(app):
                 flash("Please enter a valid URL.", "warning")
 
         return render_template('rce.html', output=output, error=error)
+    
+    @app.route('/create', methods=['GET', 'POST'])
+    def create_ticket():
+        global next_ticket_id
+        if 'username' not in session:
+            flash("You must be logged in to create a ticket.", "danger")
+            return redirect(url_for('login'))
+
+        if request.method == 'POST':
+            username = session.get('username', 'anonymous')
+            details = request.form.get('details', '')
+            description = request.form.get('description', '')
+
+            if not details or not description:
+                flash("All fields are required.", "danger")
+                return redirect(url_for('create_ticket'))
+
+            tickets.append({
+                'id': next_ticket_id,
+                'username': username,
+                'details': details,
+                'description': description
+            })
+            tid = next_ticket_id
+            next_ticket_id += 1
+            return render_template('created.html', tid=tid)
+        return render_template('create.html')
+
+    @app.route('/admin/tickets')
+    def view_tickets():
+        return render_template('admin_tickets.html', tickets=tickets)
