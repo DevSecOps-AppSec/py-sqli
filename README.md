@@ -1,5 +1,5 @@
 
-# SQL Injection Demo Application
+# Security Vulnerability Demo Application
 
 This application demonstrates SQL Injection vulnerabilities, improper access controls, and forced browsing attacks. The goal is to showcase how misconfigurations and insecure coding practices can lead to severe security breaches in web applications.
 
