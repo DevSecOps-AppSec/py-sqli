@@ -49,7 +49,7 @@ def init_db():
 
     # Insert sample users if they don't exist
     users = [
-        ('admin', hash_password('password123')),
+        ('admin', hash_password('password12')),
         ('user1', hash_password('password1')),
         ('user2', hash_password('pass2')),
         ('john_doe', hash_password('john123')),
