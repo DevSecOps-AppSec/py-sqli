@@ -36,7 +36,7 @@ def configure_routes(app):
             db = get_db()
 
             # Intentionally vulnerable to SQL Injection in the username field
-            query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed_password}'"
+            query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed_password}' "
             print(f"Executing SQL Query: {query}")  # Debug the SQL query being executed
 
             result = db.execute(query).fetchone()
