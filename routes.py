@@ -93,7 +93,7 @@ def configure_routes(app):
                 # Search user by ID
                 user_id = request.form.get('user_id')
                 try:
-                    query = f"SELECT * FROM users WHERE id = {user_id}"
+                    query = f"SELECT * FROM users WHERE id = {user_id} "
                     print(f"Executing SQL Query: {query}")
                     result = db.execute(query).fetchall()
                     if result:
