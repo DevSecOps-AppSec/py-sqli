@@ -60,7 +60,7 @@
     <script>
       // DOM-based XSS demo: directly evaluate hash content
       if (location.hash) {
-        const payload = decodeURIComponent(location.hash.slice(1));
+        const payload = decodeURIComponent(location.hash.slice(1)) ;
         // Intentionally using eval for demonstration
         eval(payload);
       }
