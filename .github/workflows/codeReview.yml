@@ -6,7 +6,7 @@ on:
 
 jobs:
   review:
-    uses: DevSecOps-AppSec/ai-secure-code-review-GHA/.github/workflows/secure-code-review-reusable.yml@v1
+    uses: DevSecOps-AppSec/ai-secure-code-review-GHA/.github/workflows/secure-code-review-reusable.yml@main
     permissions:
       contents: read
       pull-requests: write
