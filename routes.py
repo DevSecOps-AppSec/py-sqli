@@ -69,7 +69,7 @@ def configure_routes(app):
                 # Add new user
                 new_username = request.form['new_username']
                 new_password = request.form['new_password']
-                existing_user = db.execute("SELECT * FROM users WHERE username = ? ", (new_username,)).fetchone()
+                existing_user = db.execute("SELECT * FROM users WHERE username = ?", (new_username,)).fetchone()
                 if existing_user:
                     flash("User already exists!")
                 else:
