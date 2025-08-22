@@ -85,7 +85,7 @@ def configure_routes(app):
                 if admin_user:
                     flash("Cannot delete the admin user!")
                 else:
-                    db.execute("DELETE FROM users WHERE id = ?", (user_id,))
+                    db.execute("DELETE FROM users WHERE id = ? ", (user_id,))
                     db.commit()
                     flash("User deleted successfully!")
 
