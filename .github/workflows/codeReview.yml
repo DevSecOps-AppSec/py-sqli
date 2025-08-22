@@ -5,12 +5,12 @@ on:
 
 jobs:
   review:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
-    runs-on: ubuntu-latest
     steps:
-      - uses: DevSecOps-AppSec/ai-secure-code-review-GHA@v1.1
+      - uses: DevSecOps-AppSec/ai-secure-code-review-action@v1
         with:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
           model: gpt-4o-mini
