@@ -10,7 +10,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: DevSecOps-AppSec/ai-secure-code-review-action@main
+      - uses: DevSecOps-AppSec/ai-secure-code-review-action@v1
         with:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
           model: gpt-4o-mini
