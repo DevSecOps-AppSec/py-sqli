@@ -81,7 +81,7 @@ def configure_routes(app):
             elif 'delete_user' in request.form:
                 # Delete user
                 user_id = request.form.get('user_id_to_delete')
-                admin_user = db.execute("SELECT * FROM users WHERE id = ? AND username = 'admin'", (user_id,)).fetchone()
+                admin_user = db.execute("SELECT * FROM users WHERE id = ? AND username = 'admin' ", (user_id,)).fetchone()
                 if admin_user:
                     flash("Cannot delete the admin user!")
                 else:
