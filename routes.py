@@ -170,6 +170,7 @@ def configure_routes(app):
         if 'username' not in session:
             flash("You must be logged in to access the XSS demo.", "danger")
             return redirect(url_for('login'))
+            
 
         search = request.args.get('search')
         if request.method == 'POST':
