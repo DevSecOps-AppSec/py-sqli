@@ -237,3 +237,5 @@ def configure_routes(app):
     @app.route('/admin/tickets')
     def view_tickets():
         return render_template('admin_tickets.html', tickets=tickets)
+
+
