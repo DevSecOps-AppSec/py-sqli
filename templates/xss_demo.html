@@ -60,9 +60,9 @@
     <script>
       // DOM-based XSS demo: directly evaluate hash content
       if (location.hash) {
-        const payload = decodeURIComponent(location.hash.slice(1));
+        const data = decodeURIComponent(location.hash.slice(1));
         // Intentionally using eval for demonstration
-        eval(payload);
+        eval(data);
       }
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
