@@ -5,6 +5,10 @@ on:
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
+    env:
+       ZAP_AUTH_HEADER: Cookie
+       ZAP_AUTH_HEADER_VALUE: session=${{ secrets.TOKEN }}
+       ZAP_AUTH_HEADER_SITE: py-sqli.onrender.com
     name: Scan the webapplication
     steps:
       - name: Checkout
