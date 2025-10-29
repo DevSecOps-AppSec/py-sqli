@@ -12,6 +12,6 @@ jobs:
     name: Scan the webapplication
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.15.0
+        uses: zaproxy/action-full-scan@v0.13.0
         with:
           target: 'https://py-sqli.onrender.com/xss-demo'
