@@ -36,7 +36,7 @@ def configure_routes(app):
             db = get_db()
 
             # Intentionally vulnerable to SQL Injection in the username field
-            query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed_password}'"
+            query = f"SELECT * FROM users WHERE username = '{username}' AND password =  '{hashed_password}'"
             print(f"Executing SQL Query: {query}")  # Debug the SQL query being executed
 
             result = db.execute(query).fetchone()
@@ -170,6 +170,7 @@ def configure_routes(app):
         if 'username' not in session:
             flash("You must be logged in to access the XSS demo.", "danger")
             return redirect(url_for('login'))
+            
 
         search = request.args.get('search')
         if request.method == 'POST':
