@@ -36,7 +36,7 @@ def configure_routes(app):
             db = get_db()
 
             # Intentionally vulnerable to SQL Injection in the username field
-            query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed_password}'"
+            query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed_password}' "
             print(f"Executing SQL Query: {query}")  # Debug the SQL query being executed
 
             result = db.execute(query).fetchone()
@@ -81,11 +81,11 @@ def configure_routes(app):
             elif 'delete_user' in request.form:
                 # Delete user
                 user_id = request.form.get('user_id_to_delete')
-                admin_user = db.execute("SELECT * FROM users WHERE id = ? AND username = 'admin'", (user_id,)).fetchone()
+                admin_user = db.execute("SELECT * FROM users WHERE id = ? AND username = 'admin' ", (user_id,)).fetchone()
                 if admin_user:
                     flash("Cannot delete the admin user!")
                 else:
-                    db.execute("DELETE FROM users WHERE id = ?", (user_id,))
+                    db.execute("DELETE FROM users WHERE id = ? ", (user_id,))
                     db.commit()
                     flash("User deleted successfully!")
 
@@ -93,7 +93,7 @@ def configure_routes(app):
                 # Search user by ID
                 user_id = request.form.get('user_id')
                 try:
-                    query = f"SELECT * FROM users WHERE id = {user_id}"
+                    query = f"SELECT * FROM users WHERE id = {user_id} "
                     print(f"Executing SQL Query: {query}")
                     result = db.execute(query).fetchall()
                     if result:
